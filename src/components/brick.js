@@ -1,14 +1,15 @@
 'use strict';
 
 import GameComponent from './game_component.js';
+import CONSTANTS from '../constants.js';
 
 
 export default function Brick(options) {
     return new GameComponent(Object.assign( options, {
         
         //предзаданные параметры
-        width: BLOCK_WIDTH,
-        height: BLOCK_HEIGHT,
+        width: CONSTANTS.BLOCK_WIDTH,
+        height: CONSTANTS.BLOCK_HEIGHT,
         backgroundImage: 'brick.png',
         type: 'brick',
         randomImage: true,

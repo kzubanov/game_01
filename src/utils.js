@@ -1,5 +1,7 @@
 'use strict';
 
+import CONSTANTS from './constants.js';
+
 // нам нужно иметь возможность делать зацикленные анимации. 
 // но иногда нужно начать с других кадров
 // например когда показываем анимацию бега после приземления
@@ -39,13 +41,13 @@ export function makeFrames(y, xFrames, loopFrame, context) {
 // например hero может быть в 1 и 2 строках одновременно и столкновения могут быть и там и там
 export function getLinesFromBounds(bounds) {
 
-    let bottom = Math.ceil(bounds.bottom / BLOCK_HEIGHT - 1);
+    let bottom = Math.ceil(bounds.bottom / CONSTANTS.BLOCK_HEIGHT - 1);
     let top;
 
-    if (bounds.top % BLOCK_HEIGHT === 0) {
-        top = Math.ceil(bounds.top / BLOCK_HEIGHT);
+    if (bounds.top % CONSTANTS.BLOCK_HEIGHT === 0) {
+        top = Math.ceil(bounds.top / CONSTANTS.BLOCK_HEIGHT);
     } else {
-        top = Math.ceil(bounds.top / BLOCK_HEIGHT - 1);
+        top = Math.ceil(bounds.top / CONSTANTS.BLOCK_HEIGHT - 1);
     }
 
     return {top, bottom};
@@ -54,12 +56,12 @@ export function getLinesFromBounds(bounds) {
 export function getColumnsFromBounds(bounds) {
 
     let left;
-    let right = Math.ceil(bounds.right / BLOCK_WIDTH - 1);
+    let right = Math.ceil(bounds.right / CONSTANTS.BLOCK_WIDTH - 1);
 
-    if (bounds.left % BLOCK_WIDTH === 0) {
-        left = Math.ceil(bounds.left / BLOCK_WIDTH);
+    if (bounds.left % CONSTANTS.BLOCK_WIDTH === 0) {
+        left = Math.ceil(bounds.left / CONSTANTS.BLOCK_WIDTH);
     } else {
-        left = Math.ceil(bounds.left / BLOCK_WIDTH - 1);
+        left = Math.ceil(bounds.left / CONSTANTS.BLOCK_WIDTH - 1);
     }
 
     return {left, right};

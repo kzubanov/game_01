@@ -1,9 +1,7 @@
 'use strict';
 
 import GameAnimatedComponent from './game_animated_component.js';
-
-// похоже, что из-за livereload криво работают относительные пути. 
-// скопировал утилиты. потом разберусь
+import CONSTANTS from '../constants.js';
 import * as Utils from '../utils.js';
 
 // потом будут другие анимированные персонажи, 
@@ -17,16 +15,16 @@ export default class Hero extends GameAnimatedComponent {
         
         //здесь специфичные для hero значения. потом перепишу
         super({
-            width: HERO_WIDTH,
-            height: HERO_HEIGHT,
-            paddingLeft: HERO_PADDING_X,
-            paddingRight: HERO_PADDING_X,
-            paddingTop: HERO_PADDING_Y,
-            paddingBottom: HERO_PADDING_Y,
+            width: CONSTANTS.HERO_WIDTH,
+            height: CONSTANTS.HERO_HEIGHT,
+            paddingLeft: CONSTANTS.HERO_PADDING_X,
+            paddingRight: CONSTANTS.HERO_PADDING_X,
+            paddingTop: CONSTANTS.HERO_PADDING_Y,
+            paddingBottom: CONSTANTS.HERO_PADDING_Y,
             backgroundImage: 'hero.png',
             gameView: gameView,
-            left: gameView.levelController.startPosition.x * BLOCK_WIDTH,
-            top: gameView.levelController.startPosition.y * BLOCK_HEIGHT,
+            left: gameView.levelController.startPosition.x * CONSTANTS.BLOCK_WIDTH,
+            top: gameView.levelController.startPosition.y * CONSTANTS.BLOCK_HEIGHT,
 
         });
         //чтобы проще ориентироваться в верстке
@@ -162,8 +160,8 @@ export default class Hero extends GameAnimatedComponent {
             }
 
             if ( this.isOutOfLevelBottom() ) {
-                if (this.bounds.top >= this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * BLOCK_HEIGHT) {
-                    this.bounds.top = this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * BLOCK_HEIGHT;
+                if (this.bounds.top >= this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT) {
+                    this.bounds.top = this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT;
                     this.refreshBounds();
                     this.render();
                     alert('упали вниз')
@@ -251,7 +249,7 @@ export default class Hero extends GameAnimatedComponent {
         // у ворот финиша попадание в 2 блока можно считать финишем. посмотрим лок выше
         block = this.levelController.getBlockFromPoint({
             x: this.bounds.left + this.width / 2,
-            y: this.bounds.top + this.height / 2 - BLOCK_HEIGHT,
+            y: this.bounds.top + this.height / 2 - CONSTANTS.BLOCK_HEIGHT,
         }, this.levelController);
 
         if (block.type === 'finish') {
@@ -264,8 +262,8 @@ export default class Hero extends GameAnimatedComponent {
     }
 
     displaceToBounds(bounds) {
-        this.style.top = (bounds.top - HERO_PADDING_Y) + 'px';
-        this.style.left = (bounds.left - HERO_PADDING_X) + 'px';
+        this.style.top = (bounds.top - CONSTANTS.HERO_PADDING_Y) + 'px';
+        this.style.left = (bounds.left - CONSTANTS.HERO_PADDING_X) + 'px';
     }
 
     isJumpTop() {
@@ -311,14 +309,14 @@ export default class Hero extends GameAnimatedComponent {
     }
 
     isOutOfLevelBottom() {
-        if ( this.bounds.bottom >= this.levelController.blocks.length * BLOCK_HEIGHT ) {
+        if ( this.bounds.bottom >= this.levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT ) {
             return true;
         }
         return false;
     }
 
     isOutOfLevelRight() {
-        if ( this.bounds.right >= (this.levelController.blocks[0].length + 0.5) * BLOCK_WIDTH ) {
+        if ( this.bounds.right >= (this.levelController.blocks[0].length + 0.5) * CONSTANTS.BLOCK_WIDTH ) {
             return true;
         }
         return false;

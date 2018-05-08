@@ -3,6 +3,7 @@
 import Brick from './components/brick.js';
 import Gate from './components/gate.js';
 import * as Utils from './utils.js';
+import CONSTANTS from './constants.js';
 
 //здесь собираем лэйаут для игры
 //менб будем собирать отдельно, слоем выше
@@ -46,7 +47,7 @@ export default class GameView {
         // потом эти данные будут через let и из них мы будем собирать апдейт положения камеры 
         // чтобы не дергать апдейт камеры для уровней, на которых он не нужен
         this.isHeightEnouch = this.levelController.contentHeight < this.screenHeight;
-        this.isWidthEnouch =  this.levelController.contentWidth + CAMERA_PADDING_X < this.screenWidth;
+        this.isWidthEnouch =  this.levelController.contentWidth + CONSTANTS.CAMERA_PADDING_X < this.screenWidth;
 
         this.cameraFrame = {};
         //debugger;
@@ -55,14 +56,14 @@ export default class GameView {
              // нам нужно знать на сколько мы можем упасть вниз / наверх
             this.cameraFrame.fellTreshhold = this.cameraFrame.top;
         } else {
-            this.cameraFrame.top = screenHeight / 2 - (this.levelController.startPosition.y * BLOCK_HEIGHT + HERO_HEIGHT / 2);
-            this.cameraFrame.fellTreshhold = CAMERA_PADDING_Y * 2;
+            this.cameraFrame.top = screenHeight / 2 - (this.levelController.startPosition.y * CONSTANTS.BLOCK_HEIGHT + CONSTANTS.HERO_HEIGHT / 2);
+            this.cameraFrame.fellTreshhold = CONSTANTS.CAMERA_PADDING_Y * 2;
         }
 
         if (this.isWidthEnouch) {
             this.cameraFrame.left = (screenWidth - this.levelController.contentWidth) / 2;
         } else {
-            this.cameraFrame.left = CAMERA_PADDING_X;
+            this.cameraFrame.left = CONSTANTS.CAMERA_PADDING_X;
         }
 
         this.cameraFrame.width = screenWidth;
@@ -70,8 +71,8 @@ export default class GameView {
         
         this.init();
 
-        this.gameLayout.style.width = levelController.blocks[0].length * BLOCK_WIDTH + 'px';
-        this.gameLayout.style.height = levelController.blocks.length * BLOCK_HEIGHT + 'px';
+        this.gameLayout.style.width = levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
+        this.gameLayout.style.height = levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
 
     }
 
@@ -83,8 +84,8 @@ export default class GameView {
                 switch (controllerBlock.type) {
                     case 'brick':
                         new Brick({
-                            left: BLOCK_WIDTH * blockIndex,
-                            top: BLOCK_HEIGHT * lineIndex,
+                            left: CONSTANTS.BLOCK_WIDTH * blockIndex,
+                            top: CONSTANTS.BLOCK_HEIGHT * lineIndex,
                             theme: self.theme,
                             parentNode: self.gameLayout,
                             gameView: self,
@@ -92,8 +93,8 @@ export default class GameView {
                         break;
                     case 'start':
                         new Gate({
-                            left: BLOCK_WIDTH * (blockIndex - 1),
-                            top: BLOCK_HEIGHT * (lineIndex - 3),
+                            left: CONSTANTS.BLOCK_WIDTH * (blockIndex - 1),
+                            top: CONSTANTS.BLOCK_HEIGHT * (lineIndex - 3),
                             theme: self.theme,
                             parentNode: self.gameLayout,
                             gameView: self,
@@ -101,8 +102,8 @@ export default class GameView {
                         break;
                     case 'finish':
                         new Gate({
-                            left: BLOCK_WIDTH * (blockIndex - 1),
-                            top: BLOCK_HEIGHT * (lineIndex - 3),
+                            left: CONSTANTS.BLOCK_WIDTH * (blockIndex - 1),
+                            top: CONSTANTS.BLOCK_HEIGHT * (lineIndex - 3),
                             theme: self.theme,
                             parentNode: self.gameLayout,
                             gameView: self,
@@ -116,7 +117,7 @@ export default class GameView {
     updateCameraPositionX() {
         if (true) {
             let leftPosition = this.hero.bounds.left + this.hero.width / 2 - this.cameraFrame.width / 2;
-            this.cameraFrame.left = Math.min( -leftPosition, CAMERA_PADDING_X);
+            this.cameraFrame.left = Math.min( -leftPosition, CONSTANTS.CAMERA_PADDING_X);
         }
 
     }
@@ -125,28 +126,28 @@ export default class GameView {
         if (!this.isHeightEnouch) {
 
             // проверяем нужно ли двигать камеру наверх
-            if (this.cameraFrame.top + this.hero.bounds.top < CAMERA_PADDING_Y) {
+            if (this.cameraFrame.top + this.hero.bounds.top < CONSTANTS.CAMERA_PADDING_Y) {
 
                 // если выпал за край уровня можно немного полететь еще
                 if (this.hero.isOutOfLevelTop()) {
-                    this.cameraFrame.top = Math.min( CAMERA_PADDING_Y - this.hero.bounds.top, this.cameraFrame.fellTreshhold);
+                    this.cameraFrame.top = Math.min( CONSTANTS.CAMERA_PADDING_Y - this.hero.bounds.top, this.cameraFrame.fellTreshhold);
                     return;
                 }
 
                 // если не падаем, то двигаем камеру 
-                this.cameraFrame.top = CAMERA_PADDING_Y - this.hero.bounds.top;
+                this.cameraFrame.top = CONSTANTS.CAMERA_PADDING_Y - this.hero.bounds.top;
             }
             
             // проверяем нужно ли двигать камеру вниз
-            if (this.cameraFrame.height - this.cameraFrame.top - this.hero.bounds.bottom < CAMERA_PADDING_Y) {
+            if (this.cameraFrame.height - this.cameraFrame.top - this.hero.bounds.bottom < CONSTANTS.CAMERA_PADDING_Y) {
                 if (this.hero.isOutOfLevelBottom()) {
                     this.cameraFrame.top = Math.max(
                         - (this.levelController.contentHeight + this.cameraFrame.fellTreshhold - this.cameraFrame.height),
-                        this.cameraFrame.height - CAMERA_PADDING_Y - this.hero.bounds.bottom
+                        this.cameraFrame.height - CONSTANTS.CAMERA_PADDING_Y - this.hero.bounds.bottom
                     );
                     return;
                 }
-                this.cameraFrame.top = this.cameraFrame.height - CAMERA_PADDING_Y - this.hero.bounds.bottom;
+                this.cameraFrame.top = this.cameraFrame.height - CONSTANTS.CAMERA_PADDING_Y - this.hero.bounds.bottom;
                 // центрирование
                 // this.cameraFrame.top = this.cameraFrame.height / 2 - this.hero.bounds.top + this.hero.height / 2;
             }

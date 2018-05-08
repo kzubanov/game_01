@@ -1,11 +1,11 @@
-const BLOCK_WIDTH = 36;
-const BLOCK_HEIGHT = 24;
-const HERO_WIDTH = 36;
-const HERO_HEIGHT = 24;
-const HERO_PADDING_X = 36;
-const HERO_PADDING_Y = 48;
-
-const CAMERA_PADDING_X = 150;
-const CAMERA_PADDING_Y = 150;
-
-const TICK = 50;
+export default {
+    BLOCK_WIDTH: 36,
+    BLOCK_HEIGHT: 24,
+    HERO_WIDTH: 36,
+    HERO_HEIGHT: 24,
+    HERO_PADDING_X: 36,
+    HERO_PADDING_Y: 48,
+    CAMERA_PADDING_X: 150,
+    CAMERA_PADDING_Y: 150,
+    TICK: 50,
+};

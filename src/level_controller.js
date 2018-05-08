@@ -1,7 +1,9 @@
 'use strict';
 
 let readyForAction = new Event('readyForAction');
+
 import * as Utils from './utils.js';
+import CONSTANTS from './constants.js';
 
 // здесь будут баныые о блоках и методы для вычесления ближайших, запуска и тд
 
@@ -60,8 +62,8 @@ export default class LevelController {
         }
 
         // часто для рассчетов нужен размер контента
-        this.contentWidth = this.blocks[0].length * BLOCK_WIDTH;
-        this.contentHeight = this.blocks.length * BLOCK_HEIGHT;
+        this.contentWidth = this.blocks[0].length * CONSTANTS.BLOCK_WIDTH;
+        this.contentHeight = this.blocks.length * CONSTANTS.BLOCK_HEIGHT;
 
     }
 
@@ -104,8 +106,8 @@ export default class LevelController {
     }
 
     getBlockFromPoint(point) {
-        let x = Math.ceil(point.x / BLOCK_WIDTH - 1);
-        let y = Math.ceil(point.y / BLOCK_HEIGHT - 1);
+        let x = Math.ceil(point.x / CONSTANTS.BLOCK_WIDTH - 1);
+        let y = Math.ceil(point.y / CONSTANTS.BLOCK_HEIGHT - 1);
     
         if (x < 0) {
             return {};
@@ -150,19 +152,19 @@ export default class LevelController {
         // ищем ближайшие стены
         for (let i = columns.right; i < this.blocks[0].length; i++) {
             if ( this.blocks[lines.top][i].is_block || this.blocks[lines.bottom][i].is_block) {
-                nextBlockRight = i * BLOCK_WIDTH;
+                nextBlockRight = i * CONSTANTS.BLOCK_WIDTH;
                 break;
             }
         }
         for (let i = lines.bottom; i < this.blocks.length; i++) {
             if ( this.blocks[i][columns.right].is_block || this.blocks[i][columns.left].is_block ) {
-                nextBlockBottom = i * BLOCK_HEIGHT;
+                nextBlockBottom = i * CONSTANTS.BLOCK_HEIGHT;
                 break;
             }
         }
         for (let i = lines.top; i > -1; i--) {
             if ( this.blocks[i][columns.left].is_block || this.blocks[i][columns.right].is_block ) {
-                nextBlockTop = (i + 1) * BLOCK_HEIGHT;
+                nextBlockTop = (i + 1) * CONSTANTS.BLOCK_HEIGHT;
                 break;
             }
         }
@@ -181,7 +183,7 @@ export default class LevelController {
             this.hero.move();
             this.gameView.renderAll();
             this.gameView.updateCameraPosition();
-        }, TICK);
+        }, CONSTANTS.TICK);
 
         document.addEventListener('keydown', (e) => {
             if (e.keyCode === 32) {

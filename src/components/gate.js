@@ -1,13 +1,14 @@
 'use strict';
 
 import GameComponent from './game_component.js';
+import CONSTANTS from '../constants.js';
 
 export default function Gate(options) {
     return new GameComponent(Object.assign( options, {
         
         //предзаданные параметры
-        width: BLOCK_WIDTH * 3,
-        height: BLOCK_HEIGHT * 4,
+        width: CONSTANTS.BLOCK_WIDTH * 3,
+        height: CONSTANTS.BLOCK_HEIGHT * 4,
         backgroundImage: 'gate.png',
         type: 'gate',
         
