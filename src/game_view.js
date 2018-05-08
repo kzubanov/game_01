@@ -31,21 +31,20 @@ export default class GameView {
 
         // gameLayout будет часто нужен
         this.gameLayout = gameLayout;
+        
+        this.init();
+        this.updateScreenSize();
 
-        // !!! ПЕРЕПИСАТЬ !!!
-        // писал в самолете без вайфая. потом посмотрю как это сделать нормально
-        let screenWidth = getComputedStyle(document.body).width;
-        screenWidth = screenWidth.slice(0, screenWidth.length - 2);
-        let tmp = document.createElement('div');
-        document.body.append(tmp);
-        tmp.style.position = 'absolute';
-        tmp.style.height = '100%';
-        let screenHeight = getComputedStyle(tmp).height;
-        screenHeight = screenHeight.slice(0, screenHeight.length - 2);
+        this.gameLayout.style.width = levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
+        this.gameLayout.style.height = levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
 
+    }
+
+    updateScreenSize() {
+        let screenWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        let screenHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        
         // если ширины / высоты достаточно, чтобы вместить уровень, то нет смысла двигать камеру
-        // потом эти данные будут через let и из них мы будем собирать апдейт положения камеры 
-        // чтобы не дергать апдейт камеры для уровней, на которых он не нужен
         this.isHeightEnouch = this.levelController.contentHeight < this.screenHeight;
         this.isWidthEnouch =  this.levelController.contentWidth + CONSTANTS.CAMERA_PADDING_X < this.screenWidth;
 
@@ -68,12 +67,6 @@ export default class GameView {
 
         this.cameraFrame.width = screenWidth;
         this.cameraFrame.height = screenHeight;
-        
-        this.init();
-
-        this.gameLayout.style.width = levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
-        this.gameLayout.style.height = levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
-
     }
 
     init() {
