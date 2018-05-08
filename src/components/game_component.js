@@ -1,14 +1,16 @@
 'use strict';
 
+import * as Utils from './utils.js';
 
 
 // все что рисуем на канвасе
-class GameComponent {
+export default class GameComponent {
     
     constructor(options) {
 
         this.node = document.createElement('div');
         this.node.classList.add('game_element');
+        this.gameView = options.gameView;
 
         // у некоторых элементов есть поля, котрые не нужны для рассчетов, но нужны для графики
         // ширина / высота с которыми мы далее опперируем — рассчетные
@@ -21,7 +23,7 @@ class GameComponent {
         this.height = options.height || 0;
 
         if (options.backgroundImage) {
-            this.node.style.backgroundImage = 'url(src/images/' + levelController.theme + '/' + options.backgroundImage + ')';
+            this.node.style.backgroundImage = 'url(src/images/' + options.gameView.theme + '/' + options.backgroundImage + ')';
         }
 
         this.bounds = {
@@ -43,14 +45,16 @@ class GameComponent {
         if (options.randomImage) {
             let spriteLength = options.spriteLength || 0;
             let realWidth = this.width + this.paddingLeft + this.paddingRight;
-            this.node.style.backgroundPositionX = ( - realWidth * random(spriteLength - 1) ) + 'px';
+            this.node.style.backgroundPositionX = ( - realWidth * Utils.random(spriteLength - 1) ) + 'px';
         }
 
-        globalStack.initObjects.push(this);
+        options.gameView.componentStack.initObjects.push(this);
+        this.init();
     }
     
     init() {
-        gameLayout.append(this.node);
+        //gameView.gameLayout.append(this.node);
+        this.gameView.gameLayout.append(this.node);
     }
 
     // нужно будет когда будем рендерить уровень кусками 
@@ -59,39 +63,4 @@ class GameComponent {
         
     }
     
-}
-
-
-
-
-// все что умеет менять свою графику (двигать спрайт стилем)
-class GameAnimatedComponent extends GameComponent {
-    
-    constructor(options) {
-        
-        super(options);
-
-        //потом будем в конструкторе собирать стейты
-        this.states = {
-            default: {},
-        };
-        this.currentState = this.states.default;
-        this.currentFrame = this.currentState.defaultFrame;
-
-        globalStack.animatedObjects.push(this);
-    }
-    
-
-    nextFrame() {
-        this.currentFrame = this.currentFrame.nextFrame;
-    }
-
-    renderFrame() {
-        this.node.style.backgroundPosition = this.currentFrame.value;
-    }
-    
-    setState(stateKey) {
-        this.currentState = this.states[stateKey];
-        this.currentFrame = this.currentState.defaultFrame;
-    }
 }

@@ -5,4 +5,7 @@ const HERO_HEIGHT = 24;
 const HERO_PADDING_X = 36;
 const HERO_PADDING_Y = 48;
 
+const CAMERA_PADDING_X = 150;
+const CAMERA_PADDING_Y = 150;
+
 const TICK = 50;

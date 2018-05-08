@@ -1,16 +1,5 @@
 'use strict';
 
-// все время нужно обновлять кучу элементов
-// для этого завели стэк в котором храним ссылки на эти элементы, чтобы потом по всем бегать
-let globalStack = {
-    initObjects: [],
-    animatedObjects: [],
-};
-
-// основной лэйаут. потом добавятся другие нужные ноды, сделаю как-то более струтурировано
-let gameLayout;
-
-
 // нам нужно иметь возможность делать зацикленные анимации. 
 // но иногда нужно начать с других кадров
 // например когда показываем анимацию бега после приземления
@@ -21,7 +10,7 @@ let gameLayout;
 // генерируем односвязный зацикленный список в котором хранится готовое свойство background-position 
 // это нужно чтобы сразу двигать спрайт стилем без вычеслений
 // в loopFrame индекс xFrames на который мы переходим после последнего
-function makeFrames(y, xFrames, loopFrame, context) {
+export function makeFrames(y, xFrames, loopFrame, context) {
     let result = {};
     let prevObject;
     let loopObject;
@@ -46,13 +35,9 @@ function makeFrames(y, xFrames, loopFrame, context) {
 }
 
 
-let readyForAction = new Event('readyForAction');
-
-
-
 // смотрим к каким строкам / столбцам относятся разные границы эдемента
 // например hero может быть в 1 и 2 строках одновременно и столкновения могут быть и там и там
-function getLinesFromBounds(bounds) {
+export function getLinesFromBounds(bounds) {
 
     let bottom = Math.ceil(bounds.bottom / BLOCK_HEIGHT - 1);
     let top;
@@ -66,7 +51,7 @@ function getLinesFromBounds(bounds) {
     return {top, bottom};
 }
 
-function getColumnsFromBounds(bounds) {
+export function getColumnsFromBounds(bounds) {
 
     let left;
     let right = Math.ceil(bounds.right / BLOCK_WIDTH - 1);
@@ -81,40 +66,28 @@ function getColumnsFromBounds(bounds) {
 }
 
 
-function getBlockFromPoint(options) {
-    let x = Math.ceil(options.x / BLOCK_WIDTH - 1);
-    let y = Math.ceil(options.y / BLOCK_HEIGHT - 1);
-
-    if (x < 0) {
-        return {};
-    }
-    
-    if (x > levelController.blocks[0].length - 1) {
-        return {};
-    }
-
-    if (y < 0) {
-        return {};
-    }
-
-    if (y > levelController.blocks.length - 1) {
-        return {};
-    }
-
-    return levelController.blocks[y][x];
-}
-
-
 // часто приходится одно временно (почти) что-то делать
 // для этого в globalStack будем хранить массивы ссылок на такие объекты
 // аэтой функцией потом вызывать их методы по ключу
-function callFunctionByKey(objects, funcKey, args) {
+export function callFunctionByKey(objects, funcKey, args) {
     objects.forEach(object => {
         object[funcKey](args);
     });
 }
 
 // для показа рандомной картинки спрайта нужен целочисленный рандом
-function random(num) {
+export function random(num) {
     return Math.round ( num * Math.random() )
+}
+
+// проверка на то, что персонаж может передвигаться по блоку данного типа
+export function isBlock(elem) {
+    let blockTypes = ['brick'];
+    return blockTypes.indexOf(elem.type) > -1;
+}
+
+// ускорения/замедления лучше делать с нелинейной скоростью
+// пока интерполятор линейный, но потом поменяем
+export function speedInterpolator(x) {
+    return x;
 }

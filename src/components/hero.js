@@ -1,17 +1,22 @@
 'use strict';
 
+import GameAnimatedComponent from './game_animated_component.js';
 
-// если потом будут другие анимированные персонажи, 
-// то добавим еще класс и вынесем большинство методов туда. поэтому писал на классах. потом проще будет переносить
-// а пока и так ок
+// похоже, что из-за livereload криво работают относительные пути. 
+// скопировал утилиты. потом разберусь
+import * as Utils from './utils.js';
+
+// потом будут другие анимированные персонажи, 
+// добавим еще класс и вынесем большинство методов туда.
+// а пока и так сойдет
 
 //но инициализацию стейтов нужно вынести в GameAnimatedComponent !!! а то криво
-class Hero extends GameAnimatedComponent {
+export default class Hero extends GameAnimatedComponent {
     
-    constructor(options) {
+    constructor(gameView) {
         
         //здесь специфичные для hero значения. потом перепишу
-        super( Object.assign(options, {
+        super({
             width: HERO_WIDTH,
             height: HERO_HEIGHT,
             paddingLeft: HERO_PADDING_X,
@@ -19,33 +24,46 @@ class Hero extends GameAnimatedComponent {
             paddingTop: HERO_PADDING_Y,
             paddingBottom: HERO_PADDING_Y,
             backgroundImage: 'hero.png',
+            gameView: gameView,
+            left: gameView.levelController.startPosition.x * BLOCK_WIDTH,
+            top: gameView.levelController.startPosition.y * BLOCK_HEIGHT,
 
-        }));
-        
+        });
         //чтобы проще ориентироваться в верстке
         this.node.id = 'hero';
 
+        gameView.hero = this;
+
         //  здесь много всего, потом упростим
+        this.levelController = this.gameView.levelController;
         this.isJumpLocked = false;
         this.isJumpStart = true;
-        this.orientationIsNormal = levelController.startFromBottom;
-        this.jumpDirectionTop = ! levelController.startFromBottom;
+        this.orientationIsNormal = this.levelController.startFromBottom;
+        this.jumpDirectionTop = ! this.levelController.startFromBottom;
         this.nearestBorders = {};
 
         // стейты — потом вынесу инициализацию стейтов в GameAnimatedComponent
         // и буду засовывать в options асайном
-        this.states.jumpTop = makeFrames(0, [2, 3], 1, this);
-        this.states.jumpBottom = makeFrames(1, [2, 3], 1, this);
-        this.states.fellTop = makeFrames(0, [2, 3], 1, this);
-        this.states.fellBottom = makeFrames(1, [2, 3], 1, this);
-        this.states.top = makeFrames(1, [0, 0, 0, 1, 1, 1], 0, this);
-        this.states.default = makeFrames(0, [0, 0, 0, 1, 1, 1], 0, this);
-        this.states.afterJumpTop = makeFrames(1, [2, 2, 2, 0, 0, 0, 1, 1, 1], 3, this);
-        this.states.afterJumpBottom = makeFrames(0, [2, 2, 2, 0, 0, 0, 1, 1, 1], 3, this);
-        
+        this.states.jumpTop = Utils.makeFrames(0, [5, 6], 1, this);
+        this.states.jumpBottom = Utils.makeFrames(1, [5, 6], 1, this);
+        this.states.fellTop = Utils.makeFrames(0, [7, 8, 6], 2, this);
+        this.states.fellBottom = Utils.makeFrames(1, [7, 8, 6], 2, this);
+        this.states.top = Utils.makeFrames(1, [0, 0, 1, 1], 0, this);
+        this.states.default = Utils.makeFrames(0, [0, 0, 1, 1], 0, this);
+        this.states.afterJumpTop = Utils.makeFrames(1, [4, 3, 2, 0, 0, 1, 1], 3, this);
+        this.states.afterJumpBottom = Utils.makeFrames(0, [4, 3, 2, 0, 0, 1, 1], 3, this);
+
         // перетераем заданное в конструкторе. пока так, потом код выше будет вынесен и все станет ок
         this.currentState = this.states.default;
         this.currentFrame = this.currentState.defaultFrame;
+        
+        // контроллер уровня должен знать персонажа
+        this.levelController.hero = this;
+
+        let self = this;
+        this.callHeroJump = function() {
+            self.jumpStart.call(self);
+        }
     }
 
     //первый фрэйм прыжка подготовительный, персонаж тянется наверх. со 2го уже прыгаем
@@ -53,7 +71,7 @@ class Hero extends GameAnimatedComponent {
         if (this.isJumpStart) {
             return 0;
         }
-        return 30;
+        return 40;
     }
 
     //двигаем объект, рендерим фрэйм, двигаем фрэйм дальше. потом перенесем часть этих действий
@@ -69,7 +87,7 @@ class Hero extends GameAnimatedComponent {
     refreshBounds() {
         this.bounds.bottom = this.bounds.top + this.height;
         this.bounds.right = this.bounds.left + this.width;
-        this.nearestBorders = levelController.getNearestBorders(this.bounds);
+        this.nearestBorders = this.levelController.getNearestBorders(this.bounds);
     }
 
     // метод смещения за следующий рендер сцены. здесь все проверки на столкновения 
@@ -84,27 +102,19 @@ class Hero extends GameAnimatedComponent {
         // проверки есть ли стена справа 
         if ( this.isRunRightHasBarier() ) {
             this.bounds.left = this.nearestBorders.right - this.width;
-            //console.log('удар справа');
-            console.log('удар справа');
-            levelController.stop();
+            alert('удар справа');
+            this.levelController.stop();
             return;
         }
 
         //двигаемся вправо
-        this.bounds.left += levelController.speedX();
+        this.bounds.left += this.levelController.speedX(this.bounds.left);
         this.refreshBounds();
-
-        if ( this.isOutOfLevelRight() ) {
-            //console.log('упали направо')
-            console.log('упали направо');
-            levelController.stop();
-            return;
-        }
 
         // проверяем не дошли ли до старта?
         if (this.isItFinish()) {
             alert('finish!');
-            levelController.stop();
+            this.levelController.stop();
             return;
         }
         
@@ -131,9 +141,14 @@ class Hero extends GameAnimatedComponent {
             }
 
             if ( this.isOutOfLevelTop() ) {
-                console.log('падение наверх');
-                levelController.stop();
-                return;
+                if (this.bounds.top <= - this.gameView.cameraFrame.fellTreshhold) {
+                    this.bounds.top = - this.gameView.cameraFrame.fellTreshhold;
+                    this.refreshBounds();
+                    this.render();
+                    alert('упали наверх')
+                    this.levelController.stop();
+                    return;
+                }
             }
         }
 
@@ -147,15 +162,20 @@ class Hero extends GameAnimatedComponent {
             }
 
             if ( this.isOutOfLevelBottom() ) {
-                console.log('падение вниз');
-                levelController.stop();
-                return;
+                if (this.bounds.top >= this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * BLOCK_HEIGHT) {
+                    this.bounds.top = this.gameView.cameraFrame.fellTreshhold + this.levelController.blocks.length * BLOCK_HEIGHT;
+                    this.refreshBounds();
+                    this.render();
+                    alert('упали вниз')
+                    this.levelController.stop();
+                    return;
+                }
             }
         }
 
         if (this.isItFinish()) {
             alert('finish!');
-            levelController.stop();
+            this.levelController.stop();
             return;
         }
 
@@ -179,7 +199,7 @@ class Hero extends GameAnimatedComponent {
         // мы не можем прыгать в любой момент, мб идет пересчет координат, все может поломаться
         // поэтому прыжок по подписке на эвернт
         // эвент удаляем когда настало время
-        document.removeEventListener('readyForAction', callJump);
+        document.removeEventListener('readyForAction', this.callHeroJump);
         if (this.isJumpLocked) {
             return;
         }
@@ -219,20 +239,20 @@ class Hero extends GameAnimatedComponent {
     // тестировать можно будет отдельно6, что удобно
 
     isItFinish() {
-        let block = getBlockFromPoint({
+        let block = this.levelController.getBlockFromPoint({
             x: this.bounds.left + this.width / 2,
             y: this.bounds.top + this.height / 2,
-        });
+        }, this.levelController);
 
         if (block.type === 'finish') {
             return true;
         }
 
         // у ворот финиша попадание в 2 блока можно считать финишем. посмотрим лок выше
-        block = getBlockFromPoint({
+        block = this.levelController.getBlockFromPoint({
             x: this.bounds.left + this.width / 2,
             y: this.bounds.top + this.height / 2 - BLOCK_HEIGHT,
-        });
+        }, this.levelController);
 
         if (block.type === 'finish') {
             return true;
@@ -276,7 +296,7 @@ class Hero extends GameAnimatedComponent {
 
     isRunRightHasBarier() {
         if (this.nearestBorders.right !== null) {
-            if (this.bounds.right + levelController.speedX() >= this.nearestBorders.right) {
+            if (this.bounds.right + this.levelController.speedX(this.bounds.left) >= this.nearestBorders.right) {
                 return true;
             }
         }
@@ -291,14 +311,14 @@ class Hero extends GameAnimatedComponent {
     }
 
     isOutOfLevelBottom() {
-        if ( this.bounds.bottom >= levelController.blocks.length * BLOCK_HEIGHT ) {
+        if ( this.bounds.bottom >= this.levelController.blocks.length * BLOCK_HEIGHT ) {
             return true;
         }
         return false;
     }
 
     isOutOfLevelRight() {
-        if ( this.bounds.right >= (levelController.blocks[0].length + 0.5) * BLOCK_WIDTH ) {
+        if ( this.bounds.right >= (this.levelController.blocks[0].length + 0.5) * BLOCK_WIDTH ) {
             return true;
         }
         return false;

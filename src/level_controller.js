@@ -1,29 +1,138 @@
 'use strict';
 
+let readyForAction = new Event('readyForAction');
+import * as Utils from './utils.js';
+
 // здесь будут баныые о блоках и методы для вычесления ближайших, запуска и тд
 
-let levelController = {
+export default class LevelController {
     
-    startPosition: level.startPosition,
-    startFromBottom: level.startFromBottom,
-    blocks: level.blocks,
-    speed: level.speedX,
-    theme: level.theme,
+    constructor(level, options) {
 
-    // скорость бвижения определяется уровнем.
-    // но скорось прыжка это параметр hero, поэтому она там
-    speedX() {
-        return this.speed;
-    },
+        // добавим когда создадим
+        this.hero;
+        this.gameView;
+        
+        // из блоков собираем уровень
+        this.blocks = [];
+
+        //на разных уровнях будет разная графика
+        this.theme = level.theme;
+
+        // скорость будет периодически нелинейно увеличиваться за уровень
+        this.speedPlan = level.speedPlan;
+
+        // нужно для рассчета скорости — текущий скорочтной интервал
+        this.currentSpeedIntervalNum = 0;
+
+        let self = this;
+
+        // нужно пометить блоки по которым можно бегать
+        // раз уж бежим по всем элементам заодно найдем начальную точку
+        level.blocks.forEach( (line, lineIndex) => {
+            self.blocks[lineIndex] = [];
+            line.forEach( (elem, elemIndex) => {
+                //копируем тип
+                self.blocks[lineIndex][elemIndex] = {type: elem.type};
+
+                // у некоторых типов блоков есть атрибут is_block, ставим его сразу, чтобы потом не пересчитывать что блок, а что нет
+                if (Utils.isBlock(elem)) {
+                    self.blocks[lineIndex][elemIndex].is_block = true;
+                } else {
+                    self.blocks[lineIndex][elemIndex].is_block = false;
+                }
+
+                // ищим старт
+                if (elem.type === 'start') {
+                    self.startPosition = {
+                        x: elemIndex,
+                        y: lineIndex,
+                    };
+                }
+            } )
+        } );
+
+        // нам нужно знать стартуем нормально или кверх ногами
+        if ( this.blocks[this.startPosition.y + 1] && this.blocks[this.startPosition.y + 1][this.startPosition.x].is_block ) {
+            this.startFromBottom = true;
+        } else {
+            this.startFromBottom = false;
+        }
+
+        // часто для рассчетов нужен размер контента
+        this.contentWidth = this.blocks[0].length * BLOCK_WIDTH;
+        this.contentHeight = this.blocks.length * BLOCK_HEIGHT;
+
+    }
+
+    // скорость движения определяется уровнем.
+    // в пределах уровня скорость меняется
+    // но скорось прыжка это параметр hero, от уровня не зависит, поэтому speedY там
+    speedX(positionX) {
+
+        //debugger;
+
+
+        //если вышли заграницы или это последний интервал
+
+        if (this.currentSpeedIntervalNum >= this.speedPlan.length - 1) {
+            return this.speedPlan[this.speedPlan.length-1].speed;
+        }
+        
+        
+        //остальные кейсы
+        let currentInterval = this.speedPlan[this.currentSpeedIntervalNum];
+        if (
+            positionX >= currentInterval.start &&
+            positionX <= currentInterval.finish
+        ) {
+            // если нет ускорения
+            if (!currentInterval.speedBoost) {
+                return currentInterval.speed;
+            }
+            
+            //если есть ускорение
+            let lastInterval = this.speedPlan[this.currentSpeedIntervalNum - 1];
+            let positionProgress = (positionX - currentInterval.start) / (currentInterval.finish - currentInterval.start)
+            return Math.round( lastInterval.speed +  Utils.speedInterpolator(positionProgress) * (currentInterval.speed - lastInterval.speed) );
+        }
+
+        // если не попали в интервал, то просто идем к следующему
+        this.currentSpeedIntervalNum++;
+        return this.speedX(positionX);
+
+    }
+
+    getBlockFromPoint(point) {
+        let x = Math.ceil(point.x / BLOCK_WIDTH - 1);
+        let y = Math.ceil(point.y / BLOCK_HEIGHT - 1);
+    
+        if (x < 0) {
+            return {};
+        }
+        
+        if (x > this.blocks[0].length - 1) {
+            return {};
+        }
+    
+        if (y < 0) {
+            return {};
+        }
+    
+        if (y > this.blocks.length - 1) {
+            return {};
+        }
+    
+        return this.blocks[y][x];
+    }
 
     getNearestBorders(bounds) {
-
         let nextBlockTop = null;
         let nextBlockBottom = null;
         let nextBlockRight = null;
 
-        let lines = getLinesFromBounds(bounds);
-        let columns = getColumnsFromBounds(bounds);
+        let lines = Utils.getLinesFromBounds(bounds);
+        let columns = Utils.getColumnsFromBounds(bounds);
 
         if (columns.right > this.blocks[0].length - 1) {
             return {top: null, bottom: null, right: null};
@@ -64,27 +173,26 @@ let levelController = {
             bottom: nextBlockBottom,
             right: nextBlockRight
         };
-    },
+    }
 
     start() {
         this.timerId = setInterval( () => {
             document.dispatchEvent(readyForAction);
-            hero.move();
-            //hero.render();
-            callFunctionByKey(globalStack.animatedObjects, 'render', {});
+            this.hero.move();
+            this.gameView.renderAll();
+            this.gameView.updateCameraPosition();
         }, TICK);
-    },
+
+        document.addEventListener('keydown', (e) => {
+            if (e.keyCode === 32) {
+                e.preventDefault();
+                document.addEventListener('readyForAction', this.hero.callHeroJump);
+            };
+        });
+    }
 
     stop() {
         clearInterval(this.timerId);
-    },
-
-    finish() {
-
-    },
-
-    dead() {
-
     }
-    
+
 }
