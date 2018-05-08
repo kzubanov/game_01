@@ -4,7 +4,7 @@ import GameAnimatedComponent from './game_animated_component.js';
 
 // похоже, что из-за livereload криво работают относительные пути. 
 // скопировал утилиты. потом разберусь
-import * as Utils from './utils.js';
+import * as Utils from '../utils.js';
 
 // потом будут другие анимированные персонажи, 
 // добавим еще класс и вынесем большинство методов туда.
