@@ -1,6 +1,6 @@
 'use strict';
 
-import * as Utils from './utils.js';
+import * as Utils from '../utils.js';
 
 
 // все что рисуем на канвасе
