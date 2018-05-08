@@ -21,5 +21,8 @@
   "homepage": "https://github.com/kzubanov/game_01#readme",
   "devDependencies": {
     "static-livereload": "^0.1.4"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/static-livereload --path ."
   }
 }
