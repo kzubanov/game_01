@@ -4,6 +4,13 @@ import Brick from './components/brick.js';
 import Gate from './components/gate.js';
 import * as Utils from './utils.js';
 import CONSTANTS from './constants.js';
+import eventMixin from './event_mixin.js';
+
+/*
+let render = new Event('render', {
+    bubbles: true,
+});
+*/
 
 //здесь собираем лэйаут для игры
 //менб будем собирать отдельно, слоем выше
@@ -37,7 +44,6 @@ export default class GameView {
 
         this.gameLayout.style.width = levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
         this.gameLayout.style.height = levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
-
     }
 
     updateScreenSize() {
@@ -79,8 +85,6 @@ export default class GameView {
                         new Brick({
                             left: CONSTANTS.BLOCK_WIDTH * blockIndex,
                             top: CONSTANTS.BLOCK_HEIGHT * lineIndex,
-                            theme: self.theme,
-                            parentNode: self.gameLayout,
                             gameView: self,
                         });
                         break;
@@ -88,8 +92,6 @@ export default class GameView {
                         new Gate({
                             left: CONSTANTS.BLOCK_WIDTH * (blockIndex - 1),
                             top: CONSTANTS.BLOCK_HEIGHT * (lineIndex - 3),
-                            theme: self.theme,
-                            parentNode: self.gameLayout,
                             gameView: self,
                         });
                         break;
@@ -97,8 +99,6 @@ export default class GameView {
                         new Gate({
                             left: CONSTANTS.BLOCK_WIDTH * (blockIndex - 1),
                             top: CONSTANTS.BLOCK_HEIGHT * (lineIndex - 3),
-                            theme: self.theme,
-                            parentNode: self.gameLayout,
                             gameView: self,
                         });
                         break;
@@ -156,8 +156,15 @@ export default class GameView {
     }
 
     renderAll() {
+        // попробую сделать на эвентах
+        // this.gameLayout.dispatchEvent(render);
         this.componentStack.animatedObjects.forEach(object => {
-                object.render();
-            });   
+                // object.render();
+                object.trigger('render');
+            });
     }
+}
+
+for(let key in eventMixin) {
+    GameView.prototype[key] = eventMixin[key];
 }

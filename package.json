@@ -4,7 +4,8 @@
   "description": "это пиксельная игра, поэтому мы обновляем весь ui раз в несколько милисекунд (TICK) короче это фитча, а не бага",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node_modules/.bin/static-livereload --path ."
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,5 @@
   "homepage": "https://github.com/kzubanov/game_01#readme",
   "devDependencies": {
     "static-livereload": "^0.1.4"
-  },
-  "scripts": {
-    "start": "node_modules/.bin/static-livereload --path ."
   }
 }
