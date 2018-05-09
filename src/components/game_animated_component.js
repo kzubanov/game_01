@@ -1,7 +1,8 @@
 'use strict';
 
 import GameComponent from './game_component.js';
-import eventMixin from '../event_mixin.js'
+import eventMixin from './../event_mixin.js'
+import gameEvents from './../game_events.js'
 
 // все что умеет менять свою графику (двигать спрайт стилем)
 export default class GameAnimatedComponent extends GameComponent {

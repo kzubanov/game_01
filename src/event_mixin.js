@@ -34,18 +34,19 @@ let eventMixin = {
      * Генерация события с передачей данных
      *  this.trigger('select', item);
      */
-    trigger: function(eventName /*, ... */) {
+    trigger: function(event /*, ... */) {
   
-        if (!this._eventHandlers || !this._eventHandlers[eventName]) {
+        if (!this._eventHandlers || !this._eventHandlers[event.type]) {
             return; // обработчиков для события нет
         }
   
         // вызвать обработчики
-        let handlers = this._eventHandlers[eventName];
+        let handlers = this._eventHandlers[event.type];
         handlers.forEach(element => {
             element.apply( this, [...arguments].slice(1) )
         });
     }
 };
+
 
 export default eventMixin;

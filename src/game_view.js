@@ -5,6 +5,7 @@ import Gate from './components/gate.js';
 import * as Utils from './utils.js';
 import CONSTANTS from './constants.js';
 import eventMixin from './event_mixin.js';
+import gameEvents from './game_events.js';
 
 /*
 let render = new Event('render', {
@@ -160,11 +161,7 @@ export default class GameView {
         // this.gameLayout.dispatchEvent(render);
         this.componentStack.animatedObjects.forEach(object => {
                 // object.render();
-                object.trigger('render');
+                object.trigger(gameEvents.render);
             });
     }
-}
-
-for(let key in eventMixin) {
-    GameView.prototype[key] = eventMixin[key];
 }
