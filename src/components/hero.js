@@ -25,7 +25,48 @@ export default class Hero extends GameAnimatedComponent {
             gameView: gameView,
             left: gameView.levelController.startPosition.x * CONSTANTS.BLOCK_WIDTH,
             top: gameView.levelController.startPosition.y * CONSTANTS.BLOCK_HEIGHT,
-
+            states: {
+                default: {
+                    y: 0,
+                    xFrames: [0, 0, 1, 1],
+                    loopFrame: 0,
+                },
+                jumpTop: {
+                    y: 0,
+                    xFrames: [5, 6],
+                    loopFrame: 1,
+                },
+                jumpBottom: {
+                    y: 1,
+                    xFrames: [5, 6],
+                    loopFrame: 1,
+                },
+                fellTop: {
+                    y: 0,
+                    xFrames: [7, 8, 6],
+                    loopFrame: 2,
+                },
+                fellBottom: {
+                    y: 1,
+                    xFrames: [7, 8, 6],
+                    loopFrame: 2,
+                },
+                top: {
+                    y: 1,
+                    xFrames: [0, 0, 1, 1],
+                    loopFrame: 0,
+                },
+                afterJumpTop: {
+                    y: 1,
+                    xFrames: [4, 3, 2, 0, 0, 1, 1],
+                    loopFrame: 3,
+                },
+                afterJumpBottom: {
+                    y: 0,
+                    xFrames: [4, 3, 2, 0, 0, 1, 1],
+                    loopFrame: 3,
+                },
+            }
         });
 
         gameView.hero = this;
@@ -35,17 +76,6 @@ export default class Hero extends GameAnimatedComponent {
         this.orientationIsNormal = this.levelController.startFromBottom;
         this.jumpDirectionTop = ! this.levelController.startFromBottom;
         this.nearestBorders = {};
-
-        // стейты — потом вынесу инициализацию стейтов в GameAnimatedComponent
-        // и буду засовывать в options асайном
-        this.states.jumpTop = Utils.makeFrames(0, [5, 6], 1, this);
-        this.states.jumpBottom = Utils.makeFrames(1, [5, 6], 1, this);
-        this.states.fellTop = Utils.makeFrames(0, [7, 8, 6], 2, this);
-        this.states.fellBottom = Utils.makeFrames(1, [7, 8, 6], 2, this);
-        this.states.top = Utils.makeFrames(1, [0, 0, 1, 1], 0, this);
-        this.states.default = Utils.makeFrames(0, [0, 0, 1, 1], 0, this);
-        this.states.afterJumpTop = Utils.makeFrames(1, [4, 3, 2, 0, 0, 1, 1], 3, this);
-        this.states.afterJumpBottom = Utils.makeFrames(0, [4, 3, 2, 0, 0, 1, 1], 3, this);
 
         // перетераем заданное в конструкторе. пока так, потом код выше будет вынесен и все станет ок
         this.currentState = this.states.default;

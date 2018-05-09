@@ -2,40 +2,6 @@
 
 import CONSTANTS from './constants.js';
 
-// нам нужно иметь возможность делать зацикленные анимации. 
-// но иногда нужно начать с других кадров
-// например когда показываем анимацию бега после приземления
-// по-хорошему нужно планировать состояние после приземления и состояние бега после него
-// но пока запилено так. так проще
-
-// чтобы не делать кучу ненужных оппераций
-// генерируем односвязный зацикленный список в котором хранится готовое свойство background-position 
-// это нужно чтобы сразу двигать спрайт стилем без вычеслений
-// в loopFrame индекс xFrames на который мы переходим после последнего
-export function makeFrames(y, xFrames, loopFrame, context) {
-    let result = {};
-    let prevObject;
-    let loopObject;
-    let realWidth = context.width + context.paddingLeft + context.paddingRight;
-    let realHeight = context.height + context.paddingBottom + context.paddingTop;
-    xFrames.forEach((element, index, array) => {
-        let object = {value: (- element * realWidth) + 'px ' + (- y * realHeight) + 'px'};
-        if (index === loopFrame) {
-            loopObject = object;
-        }
-        if (index === 0) {
-            prevObject = object;
-            result.defaultFrame = object;
-            return;
-        }
-        result['x' + index] = object;
-        prevObject.nextFrame = object;
-        prevObject = object;
-    });
-    prevObject.nextFrame = loopObject;
-    return result;
-}
-
 
 // смотрим к каким строкам / столбцам относятся разные границы эдемента
 // например hero может быть в 1 и 2 строках одновременно и столкновения могут быть и там и там

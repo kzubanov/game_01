@@ -28,8 +28,8 @@ export default class GameView {
 
         levelController.gameView = this;
 
-        this.theme = levelController.theme;
         this.levelController = levelController;
+        this.theme = this.levelController.theme;
     }
 
     updateScreenSize() {
