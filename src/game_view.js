@@ -2,10 +2,9 @@
 
 import Brick from './components/brick.js';
 import Gate from './components/gate.js';
-import * as Utils from './utils.js';
+import Hero from './components/hero.js';
 import CONSTANTS from './constants.js';
-import eventMixin from './event_mixin.js';
-import gameEvents from './game_events.js';
+import gameEvents from './events/game_events.js';
 
 /*
 let render = new Event('render', {
@@ -30,21 +29,7 @@ export default class GameView {
         levelController.gameView = this;
 
         this.theme = levelController.theme;
-        this.hero;
-        // создаем базовые элементы игры
         this.levelController = levelController;
-        let gameLayout = document.createElement('div');
-        gameLayout.classList.add('game_view');
-        document.body.append(gameLayout);
-
-        // gameLayout будет часто нужен
-        this.gameLayout = gameLayout;
-        
-        this.init();
-        this.updateScreenSize();
-
-        this.gameLayout.style.width = levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
-        this.gameLayout.style.height = levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
     }
 
     updateScreenSize() {
@@ -78,6 +63,18 @@ export default class GameView {
 
     init() {
         let self = this;
+
+        let gameLayout = document.createElement('div');
+        gameLayout.classList.add('game_view');
+        document.body.append(gameLayout);
+
+        // gameLayout будет часто нужен
+        this.gameLayout = gameLayout;
+        
+        
+        this.gameLayout.style.width = this.levelController.blocks[0].length * CONSTANTS.BLOCK_WIDTH + 'px';
+        this.gameLayout.style.height = this.levelController.blocks.length * CONSTANTS.BLOCK_HEIGHT + 'px';
+        
         this.levelController.blocks.forEach( (controllerLine, lineIndex) => {
             controllerLine.forEach( (controllerBlock, blockIndex) => {
                 //расставляем блоки
@@ -106,6 +103,11 @@ export default class GameView {
                 }
             });
         });
+        this.hero = new Hero(this);
+        this.componentStack.initObjects.forEach(object => {
+            object.trigger(gameEvents.init);
+        });
+        this.updateScreenSize();
     }
 
     updateCameraPositionX() {
@@ -141,9 +143,9 @@ export default class GameView {
                     );
                     return;
                 }
+
+                // если не падаем, то двигаем камеру 
                 this.cameraFrame.top = this.cameraFrame.height - CONSTANTS.CAMERA_PADDING_Y - this.hero.bounds.bottom;
-                // центрирование
-                // this.cameraFrame.top = this.cameraFrame.height / 2 - this.hero.bounds.top + this.hero.height / 2;
             }
         }
     }
@@ -156,12 +158,10 @@ export default class GameView {
         this.gameLayout.style.top = this.cameraFrame.top + 'px';
     }
 
-    renderAll() {
-        // попробую сделать на эвентах
-        // this.gameLayout.dispatchEvent(render);
+    render() {
         this.componentStack.animatedObjects.forEach(object => {
-                // object.render();
-                object.trigger(gameEvents.render);
-            });
+            object.trigger(gameEvents.render);
+        });
+        this.updateCameraPosition();
     }
 }

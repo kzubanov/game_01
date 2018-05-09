@@ -1,9 +1,8 @@
 'use strict';
 
-let readyForAction = new Event('readyForAction');
-
 import * as Utils from './utils.js';
 import CONSTANTS from './constants.js';
+import gameEvents from './events/game_events.js';
 
 // здесь будут баныые о блоках и методы для вычесления ближайших, запуска и тд
 
@@ -179,16 +178,16 @@ export default class LevelController {
 
     start() {
         this.timerId = setInterval( () => {
-            document.dispatchEvent(readyForAction);
+            this.hero.trigger(gameEvents.readyForAction);
             this.hero.move();
-            this.gameView.renderAll();
-            this.gameView.updateCameraPosition();
+            this.gameView.render();
         }, CONSTANTS.TICK);
 
         document.addEventListener('keydown', (e) => {
             if (e.keyCode === 32) {
                 e.preventDefault();
-                document.addEventListener('readyForAction', this.hero.callHeroJump);
+                // debugger;
+                this.hero.on('readyForAction', this.hero.jumpStart);
             };
         });
     }

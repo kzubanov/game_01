@@ -1,6 +1,8 @@
 'use strict';
 
 import * as Utils from '../utils.js';
+import eventMixin from './../events/event_mixin.js';
+import gameEvents from './../events/game_events.js';
 
 
 // все что рисуем на канвасе
@@ -8,8 +10,6 @@ export default class GameComponent {
     
     constructor(options) {
 
-        this.node = document.createElement('div');
-        this.node.classList.add('game_element');
         this.gameView = options.gameView;
 
         // у некоторых элементов есть поля, котрые не нужны для рассчетов, но нужны для графики
@@ -22,10 +22,6 @@ export default class GameComponent {
         this.width = options.width || 0;
         this.height = options.height || 0;
 
-        if (options.backgroundImage) {
-            this.node.style.backgroundImage = 'url(src/images/' + options.gameView.theme + '/' + options.backgroundImage + ')';
-        }
-
         this.bounds = {
             top: options.top,
             left: options.left,
@@ -33,28 +29,38 @@ export default class GameComponent {
             right: options.left + this.width,
         };
 
+        this.randomImage = options.randomImage || false;
+        this.type = options.type || 'empty';
+        this.backgroundImage = options.backgroundImage || null;
+        this.spriteLength  = options.spriteLength || 1;
+
+        // многие объккты выглядят скучно когда повторяются в точности
+        // поэтому на них мы повесим спрайт текстурой и будем выводить рандомную картинку
+
+        options.gameView.componentStack.initObjects.push(this);
+        this.on('init', this.init);
+        this.on('render', this.render);
+    }
+    
+    init() {
+        this.node = document.createElement('div');
+        this.node.classList.add('game_element');
+        if (this.backgroundImage) {
+            this.node.style.backgroundImage = 'url(src/images/' + this.gameView.theme + '/' + this.backgroundImage + ')';
+        }
         this.node.style.top = this.bounds.top - this.paddingTop + 'px';
         this.node.style.left = this.bounds.left - this.paddingLeft + 'px';
         this.node.style.width = this.width + this.paddingLeft + this.paddingRight + 'px';
         this.node.style.height = this.height + this.paddingTop + this.paddingBottom + 'px';
-        
-        this.type = options.type || 'empty';
 
-        // многие объккты выглядят скучно когда повторяются в точности
-        // поэтому на них мы повесим спрайт текстурой и будем выводить рандомную картинку
-        if (options.randomImage) {
-            let spriteLength = options.spriteLength || 0;
+        if (this.randomImage) {
+            let spriteLength = this.spriteLength || 0;
             let realWidth = this.width + this.paddingLeft + this.paddingRight;
             this.node.style.backgroundPositionX = ( - realWidth * Utils.random(spriteLength - 1) ) + 'px';
         }
 
-        options.gameView.componentStack.initObjects.push(this);
-        this.init();
-    }
-    
-    init() {
-        //gameView.gameLayout.append(this.node);
         this.gameView.gameLayout.append(this.node);
+        
     }
 
     // нужно будет когда будем рендерить уровень кусками 
@@ -63,4 +69,8 @@ export default class GameComponent {
         
     }
     
+}
+
+for(let key in eventMixin) {
+    GameComponent.prototype[key] = eventMixin[key];
 }

@@ -27,12 +27,8 @@ export default class Hero extends GameAnimatedComponent {
             top: gameView.levelController.startPosition.y * CONSTANTS.BLOCK_HEIGHT,
 
         });
-        //чтобы проще ориентироваться в верстке
-        this.node.id = 'hero';
 
         gameView.hero = this;
-
-        //  здесь много всего, потом упростим
         this.levelController = this.gameView.levelController;
         this.isJumpLocked = false;
         this.isJumpStart = true;
@@ -197,7 +193,8 @@ export default class Hero extends GameAnimatedComponent {
         // мы не можем прыгать в любой момент, мб идет пересчет координат, все может поломаться
         // поэтому прыжок по подписке на эвернт
         // эвент удаляем когда настало время
-        document.removeEventListener('readyForAction', this.callHeroJump);
+        this.off('readyForAction', this.jumpStart);
+        // document.removeEventListener('readyForAction', this.callHeroJump);
         if (this.isJumpLocked) {
             return;
         }

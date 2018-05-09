@@ -2,6 +2,8 @@
 
 
 // примесь для событий на элементах
+// взял из учебника и переписал, чтобы работало с обычными ивентами, а не тольк остроками, мб потом пригодится
+// + переписал на новый сандарт
 let eventMixin = {
 
     /**
@@ -22,11 +24,14 @@ let eventMixin = {
      *  menu.off('select',  handler)
      */
     off: function(eventName, handler) {
-        let handlers = this._eventHandlers && this._eventHandlers[eventName];
-        if (!handlers) return;
+        if ( !this._eventHandlers || !this._eventHandlers[eventName]) {
+            return;
+        }
+        //let handlers = this._eventHandlers && this._eventHandlers[eventName];
+        //if (!handlers) return;
 
-        handlers.forEach(element => {
-            if (element === handler) handlers.splice(i--, 1);
+        this._eventHandlers[eventName].forEach((element, index, array) => {
+            if (element === handler) array.splice(index - 1, 1);
         });
     },
   

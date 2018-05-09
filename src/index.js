@@ -8,7 +8,7 @@ import Hero from "./components/hero.js";
 
 let levelController = new LevelController(level);
 let gameView = new GameView(levelController);
-let hero = new Hero(gameView);
+gameView.init();
 
 window.onresize = () => {
     gameView.updateScreenSize();
