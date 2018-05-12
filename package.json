@@ -21,9 +21,11 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node_modules/.bin/static-livereload --path ."
+    "start": "node_modules/.bin/static-livereload --path .",
+    "parse": "node level_parser/level_parser.js"
   },
   "dependencies": {
-    "jParser": "^1.0.2"
+    "jParser": "^1.0.2",
+    "pixel": "0.0.4"
   }
 }
