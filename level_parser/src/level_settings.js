@@ -1,4 +1,4 @@
 exports.data = {
     theme: 'default',
-    speed: 40,
+    speed: 25,
 }
