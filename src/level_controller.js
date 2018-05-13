@@ -21,7 +21,7 @@ export default class LevelController {
         this.theme = level.theme;
 
         // скорость будет периодически нелинейно увеличиваться за уровень
-        this.speedPlan = level.speedPlan;
+        this.speedPlan = Array.from(level.speedPlan);
 
         // нужно для рассчета скорости — текущий скорочтной интервал
         this.currentSpeedIntervalNum = 0;
@@ -30,9 +30,9 @@ export default class LevelController {
 
         // нужно пометить блоки по которым можно бегать
         // раз уж бежим по всем элементам заодно найдем начальную точку
-        level.blocks.forEach( (line, lineIndex) => {
+        Array.from(level.blocks).forEach( (line, lineIndex) => {
             self.blocks[lineIndex] = [];
-            line.forEach( (elem, elemIndex) => {
+            Array.from(line).forEach( (elem, elemIndex) => {
                 //копируем тип
                 self.blocks[lineIndex][elemIndex] = {type: elem.type};
 
