@@ -1,8 +1,8 @@
 'use strict';
 
-import GameAnimatedComponent from './game_animated_component.js';
-import CONSTANTS from '../constants.js';
-import * as Utils from '../utils.js';
+import GameAnimatedComponent from './../game_animated_component.js';
+import CONSTANTS from './../../utils/constants.js';
+import * as Utils from './../../utils/utils.js';
 
 // потом будут другие анимированные персонажи, 
 // добавим еще класс и вынесем большинство методов туда.
@@ -95,7 +95,7 @@ export default class Hero extends GameAnimatedComponent {
         if (this.isJumpStart) {
             return 0;
         }
-        return 40;
+        return CONSTANTS.HERO_SPEED_Y;
     }
 
     //двигаем объект, рендерим фрэйм, двигаем фрэйм дальше. потом перенесем часть этих действий

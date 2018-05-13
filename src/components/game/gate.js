@@ -1,7 +1,7 @@
 'use strict';
 
-import GameComponent from './game_component.js';
-import CONSTANTS from '../constants.js';
+import GameComponent from './../game_component.js';
+import CONSTANTS from './../../utils/constants.js';
 
 export default function Gate(options) {
     return new GameComponent(Object.assign( options, {

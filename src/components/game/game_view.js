@@ -1,10 +1,10 @@
 'use strict';
 
-import Brick from './components/brick.js';
-import Gate from './components/gate.js';
-import Hero from './components/hero.js';
-import CONSTANTS from './constants.js';
-import gameEvents from './events/game_events.js';
+import Brick from './brick.js';
+import Gate from './gate.js';
+import Hero from './hero.js';
+import CONSTANTS from './../../utils/constants.js';
+import gameEvents from './../../events/game_events.js';
 
 /*
 let render = new Event('render', {

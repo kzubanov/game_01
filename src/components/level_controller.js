@@ -1,8 +1,8 @@
 'use strict';
 
-import * as Utils from './utils.js';
-import CONSTANTS from './constants.js';
-import gameEvents from './events/game_events.js';
+import * as Utils from './../utils/utils.js';
+import CONSTANTS from './../utils/constants.js';
+import gameEvents from './../events/game_events.js';
 
 // здесь будут баныые о блоках и методы для вычесления ближайших, запуска и тд
 

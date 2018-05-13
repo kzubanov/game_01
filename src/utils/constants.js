@@ -5,6 +5,7 @@ export default {
     HERO_HEIGHT: 24,
     HERO_PADDING_X: 36,
     HERO_PADDING_Y: 48,
+    HERO_SPEED_Y: 60,
     CAMERA_PADDING_X: 150,
     CAMERA_PADDING_Y: 150,
     TICK: 50,
