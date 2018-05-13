@@ -7,7 +7,6 @@ const blockTypes = require('./src/block_types.js');
 const utils = require('./src/utils.js');
 const levelSettings = require('./src/level_settings.js');
 
-
 // потом перепишу на бесконечный цикл, без интернета не вышло сделать
 for (let levelNum = 0; levelNum < 2; levelNum++) {
 
@@ -78,8 +77,8 @@ for (let levelNum = 0; levelNum < 2; levelNum++) {
     // теперь у нас есть записанный объект с типами блоков, 
     // нужно только сделат JSON и записать в файл
     utils.levelWriter( levelNum , JSON.stringify(levelObject) );
+    levelNum++;
   });
 
-  levelNum++;
 
 }
