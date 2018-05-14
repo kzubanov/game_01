@@ -19,6 +19,7 @@ export default class GameAnimatedComponent extends GameComponent {
         this.states = {};
         for (let key in options.states) {
             this.states[key] = this.makeFrames(options.states[key]);
+            this.states[key].name = key;
         }
 
         this.currentState = this.states.default;
@@ -37,6 +38,10 @@ export default class GameAnimatedComponent extends GameComponent {
     setState(stateKey) {
         this.currentState = this.states[stateKey];
         this.currentFrame = this.currentState.defaultFrame;
+    }
+
+    getStateName() {
+        return this.currentState.name;
     }
 
     render() {
