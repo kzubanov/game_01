@@ -17,7 +17,10 @@
   },
   "homepage": "https://github.com/kzubanov/game_01#readme",
   "devDependencies": {
-    "static-livereload": "^0.1.4"
+    "css-loader": "^0.28.11",
+    "static-livereload": "^0.1.4",
+    "style-loader": "^0.21.0",
+    "webpack": "^4.8.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
