@@ -15,10 +15,5 @@ const path = require('path');
 
 exports.levelWriter = function(num, data) {
 
-    fs.writeFile( path.join(__dirname, '..', '..', 'src', 'levels', exports.levelName(num, 'json')), data, function(err) {
-        if (err) {
-            return console.log(err);
-        }
-        console.log('файл ' + exports.levelName(num, 'json') + ' сохранен');
-    });
+    fs.writeFileSync( path.join(__dirname, '..', '..', 'src', 'levels', exports.levelName(num, 'json')), data);
 }

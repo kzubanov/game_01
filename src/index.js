@@ -8,7 +8,7 @@ import Hero from "./components/game/hero.js";
 import readJSON from './utils/level_reader.js';
 
 let level = {};
-readJSON("./src/levels/level_0.json", function(object){
+readJSON("./src/levels/level_1.json", function(object){
     level = object;
 });
 
